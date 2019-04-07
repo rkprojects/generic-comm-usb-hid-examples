@@ -115,7 +115,12 @@ static ErrorCode_t HID_Ep_Hdlr(USBD_HANDLE_T hUsb, void *data, uint32_t event)
 
 	switch (event) {
 	case USB_EVT_IN:
-		sw2_intr_report_pending = 0;
+		if (sw2_intr_report_pending > 0) {
+			// Send 1 -> 0 transition.
+			report_data->in_report = 0;
+			USBD_API->hw->WriteEP(g_hUsb, HID_EP_IN, &report_data->in_report, 1);
+			sw2_intr_report_pending = 0;
+		}
 		break;
 
 	case USB_EVT_OUT_NAK:
@@ -137,6 +142,7 @@ void GPIO0_IRQHandler(void) {
 	if (is_device_active) {
 		sw2_intr_report_pending++;
 
+		// Send 0 -> 1 transition.
 		report_data->in_report = (uint8_t) sw2_intr_report_pending;
 		USBD_API->hw->WriteEP(g_hUsb, HID_EP_IN, &report_data->in_report, 1);
 	}

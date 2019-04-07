@@ -39,33 +39,31 @@
  * Public types/enumerations/variables
  ****************************************************************************/
 
-#define HID_INPUT_REPORT_BYTES       1				/* size of report in Bytes */
-#define HID_OUTPUT_REPORT_BYTES      1				/* size of report in Bytes */
-#define HID_FEATURE_REPORT_BYTES     1				/* size of report in Bytes */
-
 /**
  * HID Report Descriptor
  */
 const uint8_t HID_ReportDescriptor[] = {
-	HID_UsagePageVendor(0x00),
-	HID_Usage(0x01),
+	// Application collection belongs to Generic Desktop Page.
+	HID_UsagePage(HID_USAGE_PAGE_GENERIC),
+	// Local item tag further categorise it into System Control.
+	HID_Usage(HID_USAGE_GENERIC_SYSTEM_CTL),
 	HID_Collection(HID_Application),
-	HID_LogicalMin(0),	/* value range: 0 - 0xFF */
-	HID_LogicalMax(0xFF),
-	HID_ReportSize(8),	/* 8 bits */
-	HID_ReportCount(HID_INPUT_REPORT_BYTES),
-	HID_Usage(0x01),
-	HID_Input(HID_Data | HID_Variable | HID_Absolute),
-	HID_ReportCount(HID_OUTPUT_REPORT_BYTES),
-	HID_Usage(0x01),
-	HID_Output(HID_Data | HID_Variable | HID_Absolute),
-	HID_LogicalMin(1),	/* value range: 1 - 20 */
-	HID_LogicalMax(20),
-	HID_ReportCount(HID_FEATURE_REPORT_BYTES),
-	HID_Usage(0x01),
-	HID_Feature(HID_Data | HID_Variable | HID_Absolute),
+		HID_LogicalMin(0),
+		HID_LogicalMax(1),
+		// 1-bit report data of Sleep Control
+		HID_ReportSize(1),
+		HID_ReportCount(1),
+		// Input Main item that follows is of Sleep Control, 0 -> 1 transition initiates sleep mode.
+		HID_Usage(HID_USAGE_GENERIC_SYSCTL_SLEEP),
+		// Input button has a preferred state of 0,
+		HID_Input(HID_Data | HID_Variable | HID_Relative | HID_PreferredState),
+		// 7-bit Padding to align report on byte boundary.
+		HID_ReportSize(7),
+		HID_ReportCount(1),
+		HID_Input(HID_Constant),
 	HID_EndCollection,
 };
+
 const uint16_t HID_ReportDescSize = sizeof(HID_ReportDescriptor);
 
 /**
