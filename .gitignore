@@ -1,0 +1,13 @@
+*~
+*.o
+*.swp
+FreeRTOS_TAD_logs/
+.metadata/
+**/Debug
+**/Release
+*.launch
+*cscope.files
+*cscope.in.out
+*cscope.out
+*cscope.po.out
+**/__pycache__
